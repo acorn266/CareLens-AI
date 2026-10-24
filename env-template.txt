@@ -1,0 +1,19 @@
+# Copy this content to .env.local and fill in your actual values
+
+# Google AI API Key (Required for Gemini) - Get from https://aistudio.google.com/
+GOOGLE_AI_API_KEY=your_google_ai_api_key_here
+
+# Google Cloud Project ID
+GCP_PROJECT_ID=medivision-64979
+
+# Supabase Configuration (if using)
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+
+# Site URL for production redirects (IMPORTANT: Update this for your deployment)
+NEXT_PUBLIC_SITE_URL=https://medivision-assistant-ov3t3b7vaa-uc.a.run.app
+
+# Production Environment
+NODE_ENV=production
+NEXT_TELEMETRY_DISABLED=1

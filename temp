@@ -1,0 +1,26 @@
+
+## 🛠️ Built With
+
+### Frontend Framework & Core
+[Next.js 15, React 19, TypeScript, Tailwind CSS]
+
+### AI & Machine Learning
+[@google/generative-ai, Web Speech API]
+
+### UI Components & Design
+
+[Radix UI , Lucide React, Next Themes, Sonner, Recharts]
+
+### Backend & Database
+[Supabase, @supabase/supabase-js, @supabase/auth-helpers-nextjs]
+
+### Forms & Validation
+[React Hook Form, Zod, @hookform/resolvers]
+
+### Development & Build Tools
+[PostCSS, Autoprefixer, ESLint]
+
+### Deployment
+[Google Cloud Run]
+
+

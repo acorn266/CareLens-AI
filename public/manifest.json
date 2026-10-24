@@ -1,0 +1,116 @@
+{
+  "name": "MediVision Assistant",
+  "short_name": "MediVision",
+  "description": "AI-powered healthcare companion with emergency intelligence for elderly and disabled users",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#10b981",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["health", "medical", "accessibility", "ai"],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/placeholder-logo.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/placeholder-logo.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/placeholder-logo.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/placeholder-logo.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/placeholder-logo.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/placeholder-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/placeholder-logo.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/placeholder-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Emergency Chat",
+      "short_name": "Emergency",
+      "description": "Quick access to emergency health chat",
+      "url": "/chat?emergency=true",
+      "icons": [{ "src": "/placeholder-logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Skin Analysis",
+      "short_name": "Skin Scan",
+      "description": "Analyze skin conditions with camera",
+      "url": "/?feature=skin-analysis",
+      "icons": [{ "src": "/placeholder-logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Health Records",
+      "short_name": "Records",
+      "description": "View your health records and history",
+      "url": "/health-records",
+      "icons": [{ "src": "/placeholder-logo.png", "sizes": "192x192" }]
+    }
+  ],
+  "features": [
+    "emergency-detection",
+    "offline-capable",
+    "voice-commands",
+    "accessibility",
+    "multimodal-ai"
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "tel",
+      "url": "/?call=%s"
+    }
+  ]
+}
