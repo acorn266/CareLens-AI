@@ -233,29 +233,4 @@ npm start
 - **Cross-platform PWA**: Works everywhere without app stores
 - **Open Development**: Extensible architecture for future enhancements
 
----
 
-## 🤝 **Contributing**
-
-We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md) for details.
-
-### **Areas We Need Help:**
-
-- 🎨 **UI/UX Design** - Accessibility improvements
-- 🧠 **AI/ML** - Enhanced health pattern recognition
-- 🔒 **Security** - HIPAA compliance and privacy features
-- 🌍 **Internationalization** - Multi-language support
-- 📱 **Mobile** - Native iOS/Android app versions
-
----
-
-## 📄 **License & Compliance**
-
-- **MIT License** - Open source and freely usable
-- **HIPAA Considerations** - Built with healthcare privacy in mind
-- **Accessibility Compliance** - WCAG 2.1 AA standards targeted
-- **Medical Disclaimer** - For informational purposes, not medical advice
-
-## 📞 **Support & Contact**
-
-- 💬 **Issues**: [GitHub Issues](https://github.com/acorn266/CareLens-AI/issues)
