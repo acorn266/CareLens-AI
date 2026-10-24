@@ -1,4 +1,4 @@
--- MediVision Assistant - Supabase Database Schema
+-- CareLens AI - Supabase Database Schema
 -- Run this in your Supabase SQL Editor
 
 -- Create profiles table (extends auth.users)

@@ -2,16 +2,16 @@
 
 /**
  * Google Cloud Platform Setup Script
- * Automates the setup of GCP services for MediVision Assistant
+ * Automates the setup of GCP services for CareLens AI
  */
 
 const { execSync } = require("child_process")
 
-const PROJECT_ID = process.env.GCP_PROJECT_ID || "medivision-assistant"
+const PROJECT_ID = process.env.GCP_PROJECT_ID || "carelens-ai"
 const REGION = "us-central1"
-const SERVICE_NAME = "medivision-assistant"
+const SERVICE_NAME = "carelens-ai"
 
-console.log("🚀 Setting up Google Cloud Platform for MediVision Assistant...\n")
+console.log("🚀 Setting up Google Cloud Platform for CareLens AI...\n")
 
 try {
   // Enable required APIs
@@ -24,7 +24,7 @@ try {
   console.log("\n🔧 Setting up Cloud Build trigger...")
   execSync(
     `gcloud builds triggers create github \
-    --repo-name=medivision-assistant \
+    --repo-name=carelens-ai \
     --repo-owner=your-github-username \
     --branch-pattern="^main$" \
     --build-config=cloudbuild.yaml \

@@ -72,8 +72,8 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           </CardTitle>
           <CardDescription className="text-center">
             {isLogin
-              ? "Welcome back to MediVision Assistant"
-              : "Join MediVision Assistant for personalized health monitoring"}
+              ? "Welcome back to CareLens AI"
+              : "Join CareLens AI for personalized health monitoring"}
           </CardDescription>
         </CardHeader>
 

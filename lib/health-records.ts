@@ -1,8 +1,9 @@
+import { createClient } from "@supabase/supabase-js";
 import {
   createSupabaseClient,
   createSupabaseAdminClient,
 } from "@/lib/supabase";
-import type { HealthRecord, ChatConversation } from "@/lib/supabase";
+import type { HealthRecord } from "@/lib/supabase";
 
 // Health Records Functions
 export async function saveHealthRecord(
@@ -20,7 +21,6 @@ export async function saveHealthRecord(
     // Set auth token if provided
     if (authToken) {
       // Create a new supabase client with the auth token
-      const { createClient } = require("@supabase/supabase-js");
       const authenticatedSupabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MediVision - Offline</title>
+    <title>CareLens AI - Offline</title>
     <style>
       * {
         margin: 0;
@@ -171,7 +171,7 @@
   <body>
     <div class="container">
       <div class="icon">🏥</div>
-      <h1>MediVision Assistant</h1>
+      <h1>CareLens AI</h1>
       <p class="subtitle">Currently Offline</p>
 
       <div class="message">
@@ -226,7 +226,7 @@
       </a>
 
       <div style="margin-top: 30px; font-size: 0.9rem; opacity: 0.7">
-        <p>MediVision will sync your data when connection is restored.</p>
+        <p>CareLens AI will sync your data when connection is restored.</p>
       </div>
     </div>
 
@@ -254,7 +254,7 @@
 
         document.addEventListener("keydown", (e) => {
           if (e.key === "h" || e.key === "H") {
-            const helpText = `MediVision Assistant offline mode. Press E for emergency contacts, R to retry connection, or call 911 for emergencies.`;
+            const helpText = `CareLens AI offline mode. Press E for emergency contacts, R to retry connection, or call 911 for emergencies.`;
             synth.speak(new SpeechSynthesisUtterance(helpText));
           }
 

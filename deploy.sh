@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# MediVision Assistant - Cloud Run Deployment Script
+# CareLens AI - Cloud Run Deployment Script
 # This script deploys the application to Google Cloud Run
 
 set -e  # Exit on any error
@@ -15,10 +15,10 @@ NC='\033[0m' # No Color
 # Configuration
 PROJECT_ID=${PROJECT_ID:-""}
 REGION=${REGION:-"us-central1"}
-SERVICE_NAME="medivision-assistant"
+SERVICE_NAME="carelens-ai"
 IMAGE_NAME="gcr.io/${PROJECT_ID}/${SERVICE_NAME}"
 
-echo -e "${BLUE}🏥 MediVision Assistant - Cloud Run Deployment${NC}"
+echo -e "${BLUE}🏥 CareLens AI - Cloud Run Deployment${NC}"
 echo "=================================================="
 
 # Check if PROJECT_ID is set
@@ -165,7 +165,7 @@ SERVICE_URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --form
 echo ""
 echo -e "${GREEN}🎉 Deployment completed successfully!${NC}"
 echo "=================================================="
-echo -e "${BLUE}📱 Your MediVision Assistant is now live at:${NC}"
+echo -e "${BLUE}📱 CareLens AI is now live at:${NC}"
 echo -e "${GREEN}$SERVICE_URL${NC}"
 echo ""
 echo -e "${BLUE}📊 Service Details:${NC}"

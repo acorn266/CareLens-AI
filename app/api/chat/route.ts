@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     // Build conversation context including system prompt
     const conversationContext = [
-      HEALTH_PROMPTS.healthChat,
+      HEALTH_PROMPTS.generalHealth,
       // Add conversation history
       ...conversationHistory
         .map(

@@ -45,7 +45,7 @@ self.addEventListener("push", (event) => {
   console.log("[SW] Push message received");
 
   let notificationData = {
-    title: "MediVision Assistant",
+    title: "CareLens AI",
     body: "You have a new health reminder",
     icon: "/icon-192.png",
     badge: "/icon-192.png",
@@ -348,7 +348,7 @@ self.addEventListener("push", (event) => {
   console.log("[SW] Push notification received");
 
   const options = {
-    body: "MediVision has important health information for you",
+    body: "CareLens AI has important health information for you",
     icon: "/icon-192.png",
     badge: "/icon-72.png",
     tag: "health-notification",
@@ -367,7 +367,7 @@ self.addEventListener("push", (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification("MediVision Alert", options)
+    self.registration.showNotification("CareLens AI Alert", options)
   );
 });
 

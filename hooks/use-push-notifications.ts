@@ -101,8 +101,9 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     // Send a local notification for testing
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.ready.then((registration) => {
-        registration.showNotification('MediVision Test', {
-          body: 'This is a test notification from MediVision Assistant',
+        // `actions` is supported by service worker notifications but missing from TS's DOM lib
+        const options: NotificationOptions & { actions: { action: string; title: string }[] } = {
+          body: 'This is a test notification from CareLens AI',
           icon: '/icon-192.png',
           badge: '/icon-192.png',
           actions: [
@@ -111,7 +112,8 @@ export function usePushNotifications(): UsePushNotificationsReturn {
           ],
           data: { url: '/' },
           tag: 'test-notification'
-        })
+        }
+        registration.showNotification('CareLens AI Test', options)
       })
     }
   }, [isSupported, permission])
@@ -128,7 +130,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
 }
 
 // Utility function to convert VAPID key
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
+function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
   const padding = '='.repeat((4 - base64String.length % 4) % 4)
   const base64 = (base64String + padding)
     .replace(/-/g, '+')

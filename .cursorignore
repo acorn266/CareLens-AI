@@ -1,2 +1,5 @@
-# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
-!.env*
+# Keep local secrets out of Cursor's AI indexing and context.
+# (The placeholder template stays visible.)
+.env
+.env.*
+!.env.example

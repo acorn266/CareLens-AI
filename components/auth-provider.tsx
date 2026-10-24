@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { createSupabaseClient } from "@/lib/supabase";
-import type { User } from "@supabase/supabase-js";
+import type { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,7 +17,8 @@ interface AuthContextType {
   loading: boolean;
   signUp: (
     email: string,
-    password: string
+    password: string,
+    fullName?: string
   ) => Promise<{ data?: any; error: any }>;
   signIn: (
     email: string,
@@ -64,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
       setUser(session?.user ?? null);
       setLoading(false);
 
@@ -78,28 +79,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAuthSuccess("");
       }
 
-      // Create user profile if this is a new signup
-      if (event === "SIGNED_UP" && session?.user) {
-        try {
-          const { error } = await supabase.from("profiles").upsert({
-            id: session.user.id,
-            email: session.user.email,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          });
-          if (error) {
-            console.error("Error creating user profile:", error);
-          }
-        } catch (profileError) {
-          console.error("Profile creation failed:", profileError);
-        }
-      }
+      // New user profiles are created by the on_auth_user_created trigger
+      // in supabase-schema.sql (Supabase has no "SIGNED_UP" auth event).
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, fullName?: string) => {
     try {
       // Use environment variable if available, otherwise fall back to window.location.origin
       const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL
@@ -113,6 +100,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         password,
         options: {
           emailRedirectTo: redirectUrl,
+          // Read by the handle_new_user trigger to fill profiles.full_name
+          data: fullName ? { full_name: fullName } : undefined,
         },
       });
 

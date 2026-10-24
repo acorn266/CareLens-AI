@@ -16,7 +16,6 @@ import { apiClient } from "@/lib/api-client";
 import { useSpeech } from "@/hooks/use-speech";
 import {
   formatAnalysisText,
-  parseAnalysisSections,
 } from "@/lib/text-formatter";
 import {
   ArrowLeft,

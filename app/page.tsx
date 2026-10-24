@@ -309,7 +309,7 @@ export default function HomePage() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-foreground font-work-sans">
-                  MediVision Assistant
+                  CareLens AI
                 </h1>
                 <p className="text-sm text-muted-foreground">
                   Your AI healthcare companion

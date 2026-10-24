@@ -104,11 +104,6 @@ export async function POST(request: NextRequest) {
               : "transcript_only",
           },
           analysisResult: structuredAnalysis,
-          audioUrl: audioData
-            ? `data:${
-                audioFile?.type || "audio/webm"
-              };base64,${audioData.substring(0, 100)}...`
-            : undefined,
         },
         authToken
       );

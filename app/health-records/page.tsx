@@ -19,7 +19,6 @@ import {
 import { AccessibilityProvider } from "@/components/accessibility-provider";
 import {
   Activity,
-  Brain,
   Heart,
   Mic,
   Camera,
@@ -348,7 +347,7 @@ export default function HealthRecordsPage() {
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
                   {searchQuery || filter !== "all"
                     ? "Try adjusting your search or filter criteria."
-                    : "Start using MediVision Assistant to track your health journey."}
+                    : "Start using CareLens AI to track your health journey."}
                 </p>
                 <Link href="/">
                   <Button>Start Health Analysis</Button>

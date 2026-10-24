@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
             topP: 0.9,
             maxOutputTokens: 2048,
           },
-          systemInstruction: `You are MediVision Assistant, a specialized AI healthcare companion designed for elderly and disabled users. 
+          systemInstruction: `You are CareLens AI, a specialized AI healthcare companion designed for elderly and disabled users. 
 
 CORE PRINCIPLES:
 - Prioritize user safety and well-being
@@ -177,10 +177,7 @@ Remember: You are a supportive health companion, not a doctor. Always recommend 
         const analysisResult = analyzeHealthResponse(fullResponse, message);
 
         // Final emergency alert (combine all detections)
-        const finalEmergencyAlert =
-          emergencyAlert ||
-          streamingEmergencyAlert ||
-          analysisResult.emergencyAlert;
+        const finalEmergencyAlert = emergencyAlert || streamingEmergencyAlert;
 
         // Send final analysis
         controller.enqueue(

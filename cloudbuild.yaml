@@ -5,21 +5,21 @@ steps:
     args:
       - "build"
       - "-t"
-      - "gcr.io/$PROJECT_ID/medivision-assistant:$BUILD_ID"
+      - "gcr.io/$PROJECT_ID/carelens-ai:$BUILD_ID"
       - "-t"
-      - "gcr.io/$PROJECT_ID/medivision-assistant:latest"
+      - "gcr.io/$PROJECT_ID/carelens-ai:latest"
       - "."
 
   # Push the image to Container Registry
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "gcr.io/$PROJECT_ID/medivision-assistant:$BUILD_ID"
+      - "gcr.io/$PROJECT_ID/carelens-ai:$BUILD_ID"
 
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "gcr.io/$PROJECT_ID/medivision-assistant:latest"
+      - "gcr.io/$PROJECT_ID/carelens-ai:latest"
 
   # Deploy to Cloud Run
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
@@ -27,9 +27,9 @@ steps:
     args:
       - "run"
       - "deploy"
-      - "medivision-assistant"
+      - "carelens-ai"
       - "--image"
-      - "gcr.io/$PROJECT_ID/medivision-assistant:$BUILD_ID"
+      - "gcr.io/$PROJECT_ID/carelens-ai:$BUILD_ID"
       - "--region"
       - "us-central1"
       - "--platform"
@@ -48,8 +48,8 @@ steps:
 
 # Store images in Container Registry
 images:
-  - "gcr.io/$PROJECT_ID/medivision-assistant:$BUILD_ID"
-  - "gcr.io/$PROJECT_ID/medivision-assistant:latest"
+  - "gcr.io/$PROJECT_ID/carelens-ai:$BUILD_ID"
+  - "gcr.io/$PROJECT_ID/carelens-ai:latest"
 
 # Build options
 options:

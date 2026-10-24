@@ -123,7 +123,7 @@ export default function VoiceLoggerPage() {
             <div className="space-y-2 text-sm text-muted-foreground">
               <p>• Speak clearly and describe your symptoms in detail</p>
               <p>• Include when symptoms started, severity, and any triggers</p>
-              <p>• Mention any medications you're currently taking</p>
+              <p>• Mention any medications you&apos;re currently taking</p>
               <p>
                 • This tool provides general guidance only - consult a
                 healthcare professional for medical advice

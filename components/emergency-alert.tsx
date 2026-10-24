@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import {
   EmergencyAlert,
-  formatEmergencyAlert,
 } from "@/lib/emergency-intelligence";
 
 interface EmergencyAlertProps {

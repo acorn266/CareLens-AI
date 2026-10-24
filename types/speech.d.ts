@@ -5,6 +5,7 @@ declare class SpeechRecognition extends EventTarget {
   lang: string
   start(): void
   stop(): void
+  onstart: () => void
   onresult: (event: SpeechRecognitionEvent) => void
   onerror: (event: SpeechRecognitionErrorEvent) => void
   onend: () => void

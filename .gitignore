@@ -1,33 +1,48 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
 # dependencies
-/node_modules
+node_modules/
+.pnpm-store/
 
 # next.js
-/.next/
-/out/
+.next/
+out/
 
 # production
-/build
+build/
+dist/
 
-# debug
+# debug / logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
-# env files
-.env.local
+# env files (keep the placeholder template)
+.env
+.env.*
+!.env.example
 
 # vercel
-.vercel
+.vercel/
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
+# testing
+coverage/
 
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Google Cloud SDK
 google-cloud-sdk/
 google-cloud-sdk-*.tar.gz
 
+# local notes
 personal_docs/

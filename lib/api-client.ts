@@ -2,14 +2,14 @@ import type { HealthAnalysisResponse } from "./gemini";
 import { createSupabaseClient } from "./supabase";
 
 // API client for frontend components
-export class MediVisionAPI {
+export class CareLensAPI {
   private baseUrl: string;
 
   constructor(baseUrl = "/api") {
     this.baseUrl = baseUrl;
   }
 
-  private async getAuthHeaders() {
+  private async getAuthHeaders(): Promise<Record<string, string>> {
     const supabase = createSupabaseClient();
     const {
       data: { session },
@@ -140,4 +140,4 @@ export class MediVisionAPI {
 }
 
 // Export singleton instance
-export const apiClient = new MediVisionAPI();
+export const apiClient = new CareLensAPI();

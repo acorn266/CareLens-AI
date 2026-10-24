@@ -92,18 +92,18 @@ export async function POST(request: NextRequest) {
       try {
         savedRecord = await saveHealthRecord(
           {
-            type: "video_analysis",
+            // health_records.type only allows the four schema values, so
+            // video analyses are stored as skin analyses with mediaType "video"
+            type: "skin_analysis",
             title: `Video Analysis - ${analysisType}`,
-            content: analysisText,
-            metadata: {
+            data: {
+              mediaType: "video",
               analysisType,
               fileName: videoFile.name,
               fileSize: videoFile.size,
               fileType: videoFile.type,
-              confidence: structuredAnalysis.confidence,
-              urgency: structuredAnalysis.urgency,
             },
-            timestamp: new Date().toISOString(),
+            analysisResult: structuredAnalysis,
           },
           authToken
         );

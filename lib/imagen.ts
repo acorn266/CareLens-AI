@@ -19,6 +19,7 @@ export interface ImagenResponse {
   type?: string;
   error?: string;
   fallback?: boolean;
+  modelUsed?: string;
 }
 
 // Generate health infographic using Imagen

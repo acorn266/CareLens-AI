@@ -126,6 +126,16 @@ export interface HealthAnalysisResponse {
   urgency: "Routine" | "Monitor" | "Seek Care";
   recommendations: string[];
   followUpQuestions?: string[];
+  emergency?: {
+    detected: boolean;
+    severity: string;
+    type: string;
+    message: string;
+    recommendations: string[];
+    escalationLevel: number;
+    confidence: number;
+    locationRequired: boolean;
+  };
   timestamp: string;
 }
 

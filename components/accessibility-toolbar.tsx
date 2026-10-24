@@ -67,7 +67,7 @@ export function AccessibilityToolbar() {
     setWakeWordEnabled(newState);
     if (newState) {
       speak(
-        "Wake word detection enabled. Say 'Hey MediVision' to activate voice commands."
+        "Wake word detection enabled. Say 'Hey CareLens' to activate voice commands."
       );
     } else {
       speak("Wake word detection disabled.");
@@ -367,7 +367,7 @@ export function AccessibilityToolbar() {
             <p><strong>Voice Commands:</strong></p>
             <p>1. Click speaker to enable</p>
             <p>2. Click microphone to start</p>
-            <p>3. Say: "go home", "skin analysis", "help", etc.</p>
+            <p>3. Say: &quot;go home&quot;, &quot;skin analysis&quot;, &quot;help&quot;, etc.</p>
             <p>Or press Ctrl+Space</p>
           </div>
         </div>

@@ -128,8 +128,8 @@ export function AccessibilityProvider({
             .trim();
 
           if (
-            transcript.includes("hey medivision") ||
-            transcript.includes("hey medi vision")
+            transcript.includes("hey carelens") ||
+            transcript.includes("hey care lens")
           ) {
             speak("Yes, how can I help you?");
             setIsListeningForWakeWord(false);

@@ -17,12 +17,10 @@ import { apiClient } from "@/lib/api-client";
 import { useSpeech } from "@/hooks/use-speech";
 import {
   formatAnalysisText,
-  parseAnalysisSections,
 } from "@/lib/text-formatter";
 import {
   ArrowLeft,
   Pill,
-  AlertTriangle,
   Info,
   Volume2,
   Clock,
@@ -257,7 +255,7 @@ export default function MedicationPage() {
                     if ("Notification" in window) {
                       if (Notification.permission === "granted") {
                         // Create immediate test notification
-                        new Notification("MediVision Reminder", {
+                        new Notification("CareLens AI Reminder", {
                           body: "This is a test reminder for your medication. Set up regular reminders in your phone's settings.",
                           icon: "/icon-192.png",
                         });
@@ -267,7 +265,7 @@ export default function MedicationPage() {
                       } else if (Notification.permission !== "denied") {
                         Notification.requestPermission().then((permission) => {
                           if (permission === "granted") {
-                            new Notification("MediVision Reminder", {
+                            new Notification("CareLens AI Reminder", {
                               body: "Medication reminder notifications are now enabled. Set up regular reminders in your phone's settings.",
                               icon: "/icon-192.png",
                             });

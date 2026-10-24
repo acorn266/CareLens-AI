@@ -1,236 +1,305 @@
-# 🏥 MediVision Assistant
+<div align="center">
 
-### AI-Powered Healthcare Companion
+# CareLens AI
 
-> **Advanced multimodal AI healthcare assistant** designed for elderly and disabled users with comprehensive health monitoring and accessibility features.
+### AI-Powered Accessible Healthcare Companion
 
-## 🎯 **The Problem**
+A multimodal health assistant built with Next.js and Google Gemini that helps people understand skin concerns, medications, and symptoms through images, video, voice, and chat, designed around accessibility from the start.
 
-- **73% of elderly users** struggle with complex healthcare apps
-- **Fragmented health data** leads to poor care coordination
-- **Accessibility barriers** prevent disabled users from accessing digital health tools
-- **Limited multimodal input** options for health monitoring
+![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Google_Gemini-2.5_Flash-4285F4?logo=google&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Auth_%26_Postgres-3FCF8E?logo=supabase&logoColor=white)
 
-## 💡 **Our Solution**
+</div>
 
-**MediVision Assistant** - An AI-powered healthcare companion that makes medical assistance accessible to everyone, especially those with visual impairments or accessibility needs.
-
-### **🔥 Key Features**
-
-#### 🤖 **Advanced Multimodal AI**
-
-- **AI Skin Analysis** - Upload photos and videos for instant skin condition assessment
-- **AI Health Infographics** - Generate professional medical infographics using advanced AI image generation
-- **Voice Symptom Logger** - Record and transcribe health symptoms using speech-to-text
-- **Medication Scanner** - OCR-powered medication identification and management
-- **AI Health Chat** - Conversational AI for health questions and guidance
-- **Seamless Analysis-to-Chat Integration** - Continue conversations with AI based on analysis results
-
-#### ♿ **Accessibility-First Design**
-
-- **Full Accessibility Support** - Voice navigation, screen reader compatibility, high contrast mode
-- **Voice navigation** and screen reader optimization
-- **High contrast modes** and font scaling
-- **Keyboard-only navigation** support
-- **Simple, large UI elements** for motor impairments
-
-#### 📱 **Progressive Web App (PWA)**
-
-- **Progressive Web App** - Works offline, installable on any device
-- **Installable on any device** (phone, tablet, desktop)
-- **Background sync** for health data
-- **Native app experience** without app stores
+> [!IMPORTANT]
+> CareLens AI is a portfolio and research project. Its AI responses are **informational only** and are **not** medical diagnoses. See the [Medical Disclaimer](#13-medical-disclaimer).
 
 ---
 
-## ⚡ **Core Features**
+## Table of Contents
 
-### 🔍 **Smart Health Analysis**
-
-| Feature                 | Description                                        | AI Model         |
-| ----------------------- | -------------------------------------------------- | ---------------- |
-| **Skin Analysis**       | Analyze photos of skin conditions, rashes, wounds  | Gemini 2.5 Flash |
-| **Video Analysis**      | Analyze health videos for movement, posture, gait  | Gemini 2.5 Flash |
-| **Medication Scanner**  | Identify pills, check interactions, verify dosages | Gemini 2.5 Flash |
-| **Health Infographics** | AI-generated medical visual content and schedules  | Imagen 4.0       |
-| **Voice Logger**        | Process voice descriptions of symptoms             | Gemini 2.5 Flash |
-| **Health Chat**         | Intelligent health conversations with context      | Gemini 2.5 Flash |
-
-### 📊 **Health Data Management**
-
-- **Secure Storage**: HIPAA-compliant data handling with Supabase
-- **Conversation History**: Persistent chat records with analysis
-- **Health Statistics**: Track symptoms, medications, vital signs over time
-- **Export Data**: Download health records in multiple formats
-- **Data Insights**: AI-powered trend analysis and recommendations
-
-### 🌐 **Accessibility & PWA**
-
-- **Voice Commands**: Complete app navigation using voice commands
-- **Offline Mode**: Cached data work without internet
-- **Install Anywhere**: Works on phones, tablets, computers as native app
-- **Background Sync**: Data syncs automatically when connection restored
+1. [Project Overview](#1-project-overview)
+2. [Problem Statement](#2-problem-statement)
+3. [Our Solution](#3-our-solution)
+4. [Key Features](#4-key-features)
+5. [Technology Stack](#5-technology-stack)
+6. [System Architecture](#6-system-architecture)
+7. [Installation and Setup](#7-installation-and-setup)
+8. [Environment Variables](#8-environment-variables)
+9. [Running Locally](#9-running-locally)
+10. [Screenshots](#10-screenshots)
+11. [Accessibility Features](#11-accessibility-features)
+12. [Future Enhancements](#12-future-enhancements)
+13. [Medical Disclaimer](#13-medical-disclaimer)
 
 ---
 
-## 🛠 **Tech Stack**
+## 1. Project Overview
 
-### **Frontend**
+CareLens AI is a full-stack web application that combines Google's Gemini multimodal models with an accessibility-focused interface. Users can photograph a skin concern, upload a short video, scan a medication label, describe symptoms by voice, or ask questions in a health chat. Each analysis returns plain-language observations, a confidence level, an urgency classification (Routine / Monitor / Seek Care), and next-step suggestions that always point users toward a healthcare professional.
 
-- **Next.js 15** - React framework with App Router
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first styling
-- **Lucide Icons** - Accessible icon system
+Signed-in users can save analyses and conversations to a personal health record backed by Supabase (PostgreSQL with Row Level Security).
 
-### **AI & APIs**
+| | |
+| --- | --- |
+| **Type** | Full-stack web app (Next.js App Router + API routes) |
+| **AI provider** | Google Gemini 2.5 Flash, with optional Imagen image generation |
+| **Data layer** | Supabase Auth + PostgreSQL |
+| **Target users** | Older adults, people with visual or motor impairments, and caregivers |
 
-- **Google Gemini 2.5 Flash** - Advanced LLM for health analysis
-- **Google Imagen 4.0** - AI-generated health infographics
-- **Google Live API** - Real-time streaming responses
-- **Web Speech API** - Voice recognition and synthesis
-- **MediaDevices API** - Camera and microphone access
+## 2. Problem Statement
 
-### **Backend & Data**
+- Many health apps rely on dense interfaces, small touch targets, and text-heavy flows, which makes them hard to use for older adults and people with disabilities.
+- People often have a quick question ("Is this rash worth seeing someone about?", "What is this pill for?") but no simple, low-friction way to get general information.
+- Health notes, symptom descriptions, and AI conversations end up scattered across devices and apps.
+- Typing is not always practical; voice and camera input are often more natural.
 
-- **Supabase** - PostgreSQL database, authentication, storage
-- **Vercel** - Serverless deployment and analytics
-- **PWA Service Worker** - Offline functionality and caching
+## 3. Our Solution
 
----
+CareLens AI gives users several input modes (camera, image upload, video upload, voice, and text) behind one consistent, high-contrast, large-target interface. A server-side Gemini integration turns those inputs into structured, cautious, non-diagnostic guidance, and a keyword-based safety layer flags possible emergencies in chat. Results can be saved to a personal health record or carried into a follow-up conversation with the AI assistant.
 
-## 📱 **Screenshots**
+## 4. Key Features
 
-### Screenshots
+### Feature status
 
-Homepage Dashboard: Clean, accessible dashboard with health summary and quick actions
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/t953kyqweffpg7wdiflt.png)
+| Feature | Status | Where it lives |
+| --- | --- | --- |
+| AI-powered skin analysis (image) | Implemented | [`app/skin-analysis`](app/skin-analysis/page.tsx), [`app/api/analyze-image`](app/api/analyze-image/route.ts) |
+| Multimodal video analysis | Implemented | [`app/api/analyze-video`](app/api/analyze-video/route.ts) |
+| Medication scanning | Implemented | [`app/medication`](app/medication/page.tsx) |
+| Voice-based symptom logging | Implemented | [`app/voice-logger`](app/voice-logger/page.tsx), [`app/api/analyze-audio`](app/api/analyze-audio/route.ts) |
+| AI health chatbot | Implemented | [`app/chat`](app/chat/page.tsx), [`app/api/chat`](app/api/chat/route.ts) |
+| Emergency keyword detection in chat | Implemented (rule-based) | [`lib/emergency-intelligence.ts`](lib/emergency-intelligence.ts) |
+| AI-generated health infographics | Implemented, with fallback | [`app/api/generate-infographic`](app/api/generate-infographic/route.ts) |
+| Health records management | Implemented (requires Supabase) | [`app/health-records`](app/health-records/page.tsx), [`lib/health-records.ts`](lib/health-records.ts) |
+| Accessibility toolbar and voice navigation | Implemented | [`components/accessibility-toolbar.tsx`](components/accessibility-toolbar.tsx) |
+| Installable PWA manifest | Implemented | [`public/manifest.json`](public/manifest.json) |
+| Offline mode / background sync | Experimental, not active | [`public/sw.js`](public/sw.js) exists but is not registered |
+| Streaming chat endpoint | Experimental, not used by the UI | [`app/api/live-chat`](app/api/live-chat/route.ts) |
+| Scheduled medication reminders | Experimental | Sends a test browser notification only |
 
-Skin Analysis: AI-powered skin condition analysis with detailed insights
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/yul1vb2f6ib37v4trlt6.png)
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/npe4ggha14r85n3j9ukw.png)
+### AI-powered skin analysis
+Capture a photo with the device camera or upload an image. Gemini 2.5 Flash returns a visual assessment, possible concerns, a confidence level, an urgency level, and recommendations. The prompt explicitly instructs the model to stay non-diagnostic.
 
-Voice Logger: Voice-to-text symptom recording with transcription
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qk52jt47yn8puwqycm2r.png)
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qfq5rbes56r917w1vhtm.png)
+### Multimodal image and video processing
+The skin analysis page also accepts short video uploads (MP4, MOV, AVI; up to 25 MB). The video is sent to Gemini with a prompt that looks at movement, posture, gait, and visible skin changes.
 
-Health Chat: Conversational AI for health questions
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/u589w00ngr8cu5upwl8w.png)
+### Medication scanning
+Photograph a medication label or pill. The assistant describes the likely medication, typical usage, common side effects, interaction notes, and storage guidance, and reminds users to confirm with a pharmacist.
 
-AI Health Infographics: Professional medical infographics
+### Voice-based symptom logging
+Record a spoken description of symptoms with the browser's `MediaRecorder` API. A live transcript is shown where the Web Speech API is available, and the audio is analyzed by Gemini for key symptoms, emotional tone, urgency, and follow-up questions.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/enhn887x4299iredieec.png)
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/kylaxqh1cc68u6k7b8sn.png)
+### AI health chatbot
+A conversational assistant with conversation history (saved to Supabase when signed in). Results from skin, medication, or voice analysis can be opened directly in chat for follow-up questions. Every message passes through a rule-based emergency detector that surfaces a prominent alert with emergency guidance when it sees high-risk phrases.
 
-Health Records
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3l9y96zckvbavb7fowvx.png)
+### AI-generated health infographics
+From the medication page, users can generate a medication schedule, symptom tracker, or health progress infographic. The API tries Google Imagen models in order (`imagen-4.0-generate-001`, then Imagen 3.0) and falls back to a locally generated SVG infographic if image generation is unavailable for the API key.
 
-Accessibility Features: Comprehensive accessibility toolbar with voice navigation
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/0dayoklfqjd6hgkwki6r.png)
+### Health records management
+Signed-in users can view, search, filter by type, delete, and export (JSON) their saved skin analyses, voice logs, medication scans, and chat sessions.
 
----
+### Progressive Web App
+The app ships a web app manifest with shortcuts (Emergency Chat, Skin Analysis, Health Records), so it can be installed from supported browsers. An offline page and service worker are included in `public/` but the service worker is not yet registered, so offline caching is not active today.
 
-## 🚀 **Quick Start**
+## 5. Technology Stack
 
-### **1. Clone & Install**
+| Layer | Technologies |
+| --- | --- |
+| Framework | Next.js 15 (App Router, Route Handlers), React 19, TypeScript |
+| Styling and UI | Tailwind CSS 4, Radix UI primitives, shadcn/ui-style components, Lucide icons |
+| AI | `@google/generative-ai` SDK with Gemini 2.5 Flash; Imagen via the Generative Language REST API |
+| Browser APIs | MediaDevices (camera), MediaRecorder, Web Speech API (recognition + synthesis), Notifications |
+| Auth and data | Supabase Auth, Supabase PostgreSQL with Row Level Security ([`supabase-schema.sql`](supabase-schema.sql)) |
+| Forms and validation | React Hook Form, Zod |
+| Analytics | Vercel Analytics |
+| Deployment | Docker (standalone Next.js output), Google Cloud Run via [`cloudbuild.yaml`](cloudbuild.yaml) / [`deploy.sh`](deploy.sh) |
+
+## 6. System Architecture
+
+```mermaid
+flowchart LR
+    subgraph Client["Browser (Next.js client)"]
+        UI["Pages: Dashboard, Skin Analysis,<br/>Medication, Voice Logger, Chat, Records"]
+        A11y["Accessibility Provider<br/>voice commands, font size, contrast"]
+        Media["Camera / MediaRecorder /<br/>Web Speech API"]
+    end
+
+    subgraph Server["Next.js Route Handlers (/api)"]
+        Img["/analyze-image"]
+        Vid["/analyze-video"]
+        Aud["/analyze-audio"]
+        Chat["/chat"]
+        Info["/generate-infographic"]
+        Emerg["Emergency keyword detector"]
+    end
+
+    subgraph External["External services"]
+        Gemini["Google Gemini 2.5 Flash"]
+        Imagen["Google Imagen"]
+        Supa["Supabase Auth + PostgreSQL"]
+    end
+
+    Media --> UI
+    A11y --> UI
+    UI -->|base64 image| Img
+    UI -->|multipart video| Vid
+    UI -->|audio blob| Aud
+    UI -->|message + history| Chat
+    UI -->|infographic request| Info
+    Chat --> Emerg
+    Img & Vid & Aud & Chat --> Gemini
+    Info --> Imagen
+    Info -.->|fallback| SVG["SVG infographic"]
+    UI <-->|auth, health_records,<br/>conversations| Supa
+```
+
+**Request flow:** the client captures media, encodes it, and calls a Route Handler. The handler adds a task-specific prompt from [`lib/gemini.ts`](lib/gemini.ts), calls Gemini on the server (so the API key never reaches the browser), and parses the reply into confidence, urgency, and recommendations. The client renders the result and, for signed-in users, saves it to Supabase.
+
+**Project structure**
+
+```text
+app/
+  api/                 Route Handlers (Gemini, Imagen, health check)
+  auth/callback/       Supabase auth redirect handler
+  chat/ health-records/ medication/ skin-analysis/ voice-logger/
+components/            Accessibility, auth, camera, recorder, UI primitives
+hooks/                 Speech, voice commands, keyboard navigation, push notifications
+lib/                   Gemini prompts, API client, Supabase, health records, emergency detection
+public/                Manifest, service worker, offline page, icons
+supabase-schema.sql    Database tables, RLS policies, and triggers
+```
+
+## 7. Installation and Setup
+
+### Prerequisites
+
+- Node.js 20 or newer
+- npm (the project's lockfile is `package-lock.json`)
+- A [Google AI Studio](https://aistudio.google.com/) API key
+- A [Supabase](https://supabase.com/) project (for sign-in and health records)
+
+### 1. Clone and install
 
 ```bash
-git clone https://github.com/acorn266/CareLens-AI
+git clone https://github.com/acorn266/CareLens-AI.git
 cd CareLens-AI
 npm install
 ```
 
-### **2. Environment Setup**
+### 2. Configure environment variables
 
 ```bash
-# Copy environment template
 cp .env.example .env.local
-
-# Add your API keys:
-GOOGLE_AI_API_KEY=your_gemini_api_key
-GCP_PROJECT_ID=your_gcp_project_id
-CUSTOM_KEY=your_custom_key
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-NEXT_PUBLIC_SITE_URL=https://medivision.yourdomain.com
 ```
 
-### **3. Database Setup**
+Then fill in the values described in [Environment Variables](#8-environment-variables).
+
+### 3. Set up the database
+
+1. Open your Supabase project and go to **SQL Editor**.
+2. Paste and run the contents of [`supabase-schema.sql`](supabase-schema.sql). It creates the `profiles`, `health_records`, `conversations`, `medications`, and `medication_logs` tables with Row Level Security policies.
+3. Under **Authentication > URL Configuration**, add `http://localhost:3000/auth/callback` (and your production URL) as a redirect URL.
+
+## 8. Environment Variables
+
+| Variable | Required | Scope | Description |
+| --- | --- | --- | --- |
+| `GOOGLE_AI_API_KEY` | Yes | Server | Google AI Studio key used for Gemini and Imagen |
+| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Client + server | Your Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Client + server | Supabase anonymous (public) key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Optional | Server only | Used only by the server-side admin client. Never expose it to the browser |
+| `NEXT_PUBLIC_SITE_URL` | Recommended | Client + server | Base URL for auth redirects, for example `http://localhost:3000` |
+| `GCP_PROJECT_ID` | Optional | Scripts | Used by `scripts/setup-gcp.js` for Cloud Run setup |
+| `CUSTOM_KEY` | Optional | Build | Passed through `next.config.mjs`; not used by app code |
+
+`.env.local` is git-ignored. Only [`.env.example`](.env.example), which contains placeholders, is committed.
+
+## 9. Running Locally
 
 ```bash
-# Set up Supabase database using the provided SQL schema
-# Import the supabase-schema.sql file into your Supabase project
-# This will create all necessary tables for health records, conversations, and user data
-# The schema includes proper RLS policies and triggers for data security
-```
-
-### **4. Development**
-
-```bash
+# Development server at http://localhost:3000
 npm run dev
-# Open http://localhost:3000
+
+# Production build and start
+npm run build
+npm start
+
+# Lint
+npm run lint
+
+# Check the API is up and the Gemini key is configured
+curl http://localhost:3000/api/health
 ```
 
-### **5. PWA Testing**
+Camera and microphone access require a secure context. `localhost` works for development; deployed instances must use HTTPS.
+
+### Docker
 
 ```bash
-# Build for production
-npm run build
-
-# Test PWA features locally
-npm start
+docker build -t carelens-ai \
+  --build-arg NEXT_PUBLIC_SUPABASE_URL=... \
+  --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=... \
+  --build-arg GOOGLE_AI_API_KEY=... .
+docker run -p 3000:3000 carelens-ai
 ```
 
----
+For Google Cloud Run, see [`deploy.sh`](deploy.sh) and [`cloudbuild.yaml`](cloudbuild.yaml).
 
-## 🧪 **Demo Instructions**
+## 10. Screenshots
 
-### **🎭 For Demo/Review:**
+> Screenshots will be added to [`docs/screenshots/`](docs/screenshots/). The placeholders below show what each one will cover.
 
-1. **Skin Analysis**: Upload a photo → See AI medical analysis with confidence scores
-2. **Voice Commands**: Use voice navigation → Experience accessibility features
-3. **Health Chat**: Ask health questions → Get AI-powered responses
-4. **PWA Install**: Click browser install prompt → Use as native app
-5. **Voice Logger**: Record symptoms → See transcription and analysis
+| Screen | Preview |
+| --- | --- |
+| Dashboard | _Screenshot coming soon_ (`docs/screenshots/dashboard.png`) |
+| Skin analysis result | _Screenshot coming soon_ (`docs/screenshots/skin-analysis.png`) |
+| Video analysis | _Screenshot coming soon_ (`docs/screenshots/video-analysis.png`) |
+| Medication scanner | _Screenshot coming soon_ (`docs/screenshots/medication-scanner.png`) |
+| AI health infographic | _Screenshot coming soon_ (`docs/screenshots/infographic.png`) |
+| Voice symptom logger | _Screenshot coming soon_ (`docs/screenshots/voice-logger.png`) |
+| Health chat with emergency alert | _Screenshot coming soon_ (`docs/screenshots/chat.png`) |
+| Health records | _Screenshot coming soon_ (`docs/screenshots/health-records.png`) |
+| Accessibility toolbar | _Screenshot coming soon_ (`docs/screenshots/accessibility-toolbar.png`) |
 
-### **🔥 Key Features to Highlight:**
+## 11. Accessibility Features
 
-- **Multimodal AI analysis** with image, video, and voice processing
-- **Accessibility-first design** with voice navigation and screen reader support
-- **Progressive Web App** with offline functionality
-- **Voice accessibility** with natural language commands
-- **Professional medical UI** with comprehensive health monitoring
+Accessibility shaped the interface from the start. The features below are implemented; the app has **not** been formally audited against WCAG.
 
-### **Competitive Advantage**
+| Feature | Details |
+| --- | --- |
+| Floating accessibility toolbar | Available on every page |
+| Adjustable text size | 100% to 300% in 25% steps, saved per browser |
+| High-contrast mode | Toggle from the toolbar, saved per browser |
+| Voice navigation | Spoken commands to move between pages (Web Speech API); start with the mic button or <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Space</kbd> |
+| Wake word | Optional "Hey CareLens" listening mode |
+| Text-to-speech feedback | Actions and results can be read aloud |
+| Keyboard navigation | Arrow keys, <kbd>Enter</kbd>/<kbd>Space</kbd>, <kbd>Escape</kbd>, and <kbd>Tab</kbd> handling, plus a "Skip to main content" link |
+| Screen reader support | Live-region announcements and ARIA labels on interactive controls |
+| Large touch targets | Dedicated `touch-target` sizing for primary actions |
 
-✅ **Only solution** combining multimodal AI with accessibility-first design  
-✅ **Real-time streaming analysis** vs batch processing competitors  
-✅ **PWA deployment** = zero app store friction  
-✅ **Open source friendly** vs proprietary closed systems
+Voice features depend on browser support for the Web Speech API (best in Chromium-based browsers).
 
----
+## 12. Future Enhancements
 
-## 🏆 **What Makes This Project Stand Out**
+- Register the existing service worker to enable offline caching and background sync
+- Scheduled medication reminders backed by the `medications` and `medication_logs` tables
+- Switch the chat UI to the streaming `/api/live-chat` endpoint
+- Automated tests (unit tests for parsing and emergency detection, end-to-end tests for core flows)
+- A formal accessibility audit with assistive-technology users
+- Multi-language support
+- A professionally designed app icon (the current PNG icons are rendered from `public/icon.svg`) and PWA store screenshots
 
-### **Technical Excellence**
+## 13. Medical Disclaimer
 
-- **Advanced AI Integration**: Latest Gemini 2.5 models with streaming
-- **Real-time Intelligence**: Emergency detection during live conversation
-- **Production-Ready**: PWA with offline functionality and background sync
-- **Accessibility Leadership**: Voice-first design with full WCAG compliance
+CareLens AI is an educational and portfolio project. It is **not** a medical device and has not been clinically validated or reviewed by any regulatory body.
 
-### **Social Impact**
-
-- **Inclusivity Focus**: Built for underserved elderly and disabled communities
-- **Healthcare Access**: Breaks down barriers to digital health tools
-- **Family Peace of Mind**: Caregivers get comprehensive health monitoring
-- **Accessibility Leadership**: Voice-first design with full WCAG compliance
-
-### **Innovation Factor**
-
-- **First-of-its-kind**: Multimodal AI healthcare companion with accessibility focus
-- **Advanced AI Integration**: Latest multimodal models for comprehensive health analysis
-- **Cross-platform PWA**: Works everywhere without app stores
-- **Open Development**: Extensible architecture for future enhancements
-
-
+- AI-generated responses are **informational only** and may be incomplete or wrong. They are not medical diagnoses, treatment plans, or professional medical advice.
+- Confidence and urgency labels come from the language model's own output and are not clinically calibrated.
+- Emergency detection is a simple keyword and threshold check and can miss real emergencies.
+- Always consult a qualified healthcare professional about medical concerns. **In an emergency, call your local emergency number (for example 911 in the US) right away.**
+- The project has not been assessed for HIPAA or any other healthcare compliance standard. Do not use it to store real patient data without your own security and compliance review.

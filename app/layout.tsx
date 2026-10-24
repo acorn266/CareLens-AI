@@ -21,7 +21,7 @@ const workSans = Work_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "MediVision Assistant - AI-Powered Healthcare Companion",
+  title: "CareLens AI - AI-Powered Accessible Healthcare Companion",
   description:
     "Accessible multimodal health monitoring for elderly and disabled users",
   generator: "",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     "health monitoring",
     "elderly care",
   ],
-  authors: [{ name: "MediVision Team" }],
+  authors: [{ name: "CareLens AI" }],
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -62,7 +62,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#10b981" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="MediVision" />
+        <meta name="apple-mobile-web-app-title" content="CareLens AI" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
       <body className={`${inter.variable} ${workSans.variable} antialiased`}>
