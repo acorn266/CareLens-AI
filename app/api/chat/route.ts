@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { getGeminiProModel, HEALTH_PROMPTS } from "@/lib/gemini";
 import { saveConversation, updateConversation } from "@/lib/health-records";
+import { getBearerToken } from "@/lib/auth-token";
 import {
   emergencyIntelligence,
   EmergencyAlert,
@@ -17,8 +18,7 @@ export async function POST(request: NextRequest) {
     } = await request.json();
 
     // Extract auth token from headers
-    const authHeader = request.headers.get("Authorization");
-    const authToken = authHeader?.replace("Bearer ", "");
+    const authToken = getBearerToken(request);
 
     if (!message?.trim()) {
       return NextResponse.json(

@@ -5,6 +5,7 @@ import {
   parseHealthAnalysis,
 } from "@/lib/gemini";
 import { saveHealthRecord } from "@/lib/health-records";
+import { getBearerToken } from "@/lib/auth-token";
 import { isPreviewMode } from "@/lib/preview-mode";
 import { MOCK_AI_TEXT } from "@/lib/preview/mock-ai";
 
@@ -67,8 +68,7 @@ export async function POST(request: NextRequest) {
     // Save to database if user is authenticated
     try {
       // Extract auth token from request headers
-      const authHeader = request.headers.get("authorization");
-      const authToken = authHeader?.replace("Bearer ", "");
+      const authToken = getBearerToken(request);
 
       const savedRecord = await saveHealthRecord(
         {

@@ -5,6 +5,7 @@ import {
   parseHealthAnalysis,
 } from "@/lib/gemini";
 import { saveHealthRecord } from "@/lib/health-records";
+import { getBearerToken } from "@/lib/auth-token";
 import { isPreviewMode } from "@/lib/preview-mode";
 import { MOCK_AI_TEXT } from "@/lib/preview/mock-ai";
 
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const videoFile = formData.get("video") as File;
     const analysisType = (formData.get("analysisType") as string) || "general";
-    const authToken = request.headers.get("authorization");
+    const authToken = getBearerToken(request);
 
     console.log("🎥 Video analysis request received");
     console.log("📁 Video file:", videoFile ? {

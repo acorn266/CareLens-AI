@@ -213,7 +213,6 @@ Then fill in the values described in [Environment Variables](#8-environment-vari
 | `GEMINI_MODEL` | Optional | Server | Overrides the Gemini model (default `gemini-3.6-flash`). On a temporary 429/503 the app retries once with `gemini-3.5-flash-lite` |
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes | Client + server | Your Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Client + server | Supabase anonymous (public) key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Optional | Server only | Used only by the server-side admin client. Never expose it to the browser |
 | `NEXT_PUBLIC_SITE_URL` | Recommended | Client + server | Base URL for auth redirects, for example `http://localhost:3000` |
 | `GCP_PROJECT_ID` | Optional | Scripts | Used by `scripts/setup-gcp.js` for Cloud Run setup |
 | `CUSTOM_KEY` | Optional | Build | Passed through `next.config.mjs`; not used by app code |

@@ -1,9 +1,55 @@
-import { createClient } from "@supabase/supabase-js";
-import {
-  createSupabaseClient,
-  createSupabaseAdminClient,
-} from "@/lib/supabase";
+import { createClient, type User } from "@supabase/supabase-js";
+import { createSupabaseClient } from "@/lib/supabase";
 import type { HealthRecord } from "@/lib/supabase";
+import { isPreviewMode } from "@/lib/preview-mode";
+
+// Server-side: has Supabase Auth validate the caller's access token, then
+// returns a client that acts as that user (public anon key + the user's JWT),
+// so every query is subject to Row Level Security. Returns null when the token
+// is missing, expired, revoked or forged. No service-role key is involved.
+export async function getUserScopedClient(
+  authToken?: string
+): Promise<{ supabase: any; user: User } | null> {
+  if (!authToken) return null;
+
+  const supabase = isPreviewMode
+    ? createSupabaseClient()
+    : createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          global: { headers: { Authorization: `Bearer ${authToken}` } },
+          auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+            detectSessionInUrl: false,
+          },
+        }
+      );
+
+  // Passing the token makes Supabase Auth verify it server-side
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser(authToken);
+
+  return error || !user ? null : { supabase, user };
+}
+
+// Chooses the client for a write: the token's user on the server, or the
+// signed-in session when called from the browser. The server never falls back
+// to its shared client for user data.
+async function resolveUserClient(authToken?: string) {
+  if (authToken) return getUserScopedClient(authToken);
+  if (typeof window === "undefined") return null;
+
+  const supabase = createSupabaseClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  return error || !user ? null : { supabase, user: user as User };
+}
 
 // Health Records Functions
 export async function saveHealthRecord(
@@ -16,69 +62,14 @@ export async function saveHealthRecord(
   authToken?: string
 ) {
   try {
-    const supabase = createSupabaseClient();
+    const auth = await resolveUserClient(authToken);
 
-    // Set auth token if provided
-    if (authToken) {
-      // Create a new supabase client with the auth token
-      const authenticatedSupabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          global: {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          },
-        }
-      );
-      // Use the authenticated client for the user check
-      const {
-        data: { user },
-        error: authError,
-      } = await authenticatedSupabase.auth.getUser();
-
-      if (authError || !user) {
-        console.warn("User not authenticated, skipping health record save");
-        return null;
-      }
-
-      // Use authenticated client for database operations
-      const { data, error } = await authenticatedSupabase
-        .from("health_records")
-        .insert([
-          {
-            user_id: user.id,
-            type: recordData.type,
-            title: recordData.title,
-            data: recordData.data,
-            analysis_result: recordData.analysisResult,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-        ])
-        .select()
-        .single();
-
-      if (error) {
-        console.error("Database error:", error);
-        throw error;
-      }
-
-      return data;
-    }
-
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    if (!auth) {
       console.warn("User not authenticated, skipping health record save");
       return null; // Return null instead of throwing error
     }
 
+    const { supabase, user } = auth;
     const { data, error } = await supabase
       .from("health_records")
       .insert([
@@ -211,33 +202,12 @@ export async function saveConversation(
   authToken?: string
 ) {
   try {
-    let supabase;
-    let user;
-
-    if (authToken) {
-      // Use admin client for server-side operations
-      supabase = createSupabaseAdminClient();
-      
-      // Verify the token and get user info
-      const { data: { user: tokenUser }, error: tokenError } = await supabase.auth.getUser(authToken);
-      if (tokenError || !tokenUser) {
-        throw new Error("Invalid auth token");
-      }
-      user = tokenUser;
-    } else {
-      // Use regular client for client-side operations
-      supabase = createSupabaseClient();
-      
-      const {
-        data: { user: sessionUser },
-        error: authError,
-      } = await supabase.auth.getUser();
-
-      if (authError || !sessionUser) {
-        throw new Error("User not authenticated");
-      }
-      user = sessionUser;
+    // User-scoped access: RLS limits this to the caller's own conversations
+    const auth = await resolveUserClient(authToken);
+    if (!auth) {
+      throw new Error("User not authenticated");
     }
+    const { supabase, user } = auth;
 
     console.log("Saving conversation:", {
       title,
@@ -278,33 +248,12 @@ export async function updateConversation(
   authToken?: string
 ) {
   try {
-    let supabase;
-    let user;
-
-    if (authToken) {
-      // Use admin client for server-side operations
-      supabase = createSupabaseAdminClient();
-      
-      // Verify the token and get user info
-      const { data: { user: tokenUser }, error: tokenError } = await supabase.auth.getUser(authToken);
-      if (tokenError || !tokenUser) {
-        throw new Error("Invalid auth token");
-      }
-      user = tokenUser;
-    } else {
-      // Use regular client for client-side operations
-      supabase = createSupabaseClient();
-      
-      const {
-        data: { user: sessionUser },
-        error: authError,
-      } = await supabase.auth.getUser();
-
-      if (authError || !sessionUser) {
-        throw new Error("User not authenticated");
-      }
-      user = sessionUser;
+    // User-scoped access: RLS limits this to the caller's own conversations
+    const auth = await resolveUserClient(authToken);
+    if (!auth) {
+      throw new Error("User not authenticated");
     }
+    const { supabase, user } = auth;
 
     const { data, error } = await supabase
       .from("conversations")
