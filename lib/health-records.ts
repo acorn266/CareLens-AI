@@ -209,11 +209,8 @@ export async function saveConversation(
     }
     const { supabase, user } = auth;
 
-    console.log("Saving conversation:", {
-      title,
-      messageCount: messages.length,
-      userId: user.id,
-    });
+    // Log counts only; titles and messages contain health information
+    console.log("Saving conversation:", { messageCount: messages.length });
 
     const { data, error } = await supabase
       .from("conversations")
