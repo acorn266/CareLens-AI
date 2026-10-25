@@ -83,6 +83,35 @@ export class CareLensAPI {
     };
   }
 
+  async analyzeVideo(
+    videoFile: File,
+    analysisType: string = "skin"
+  ): Promise<HealthAnalysisResponse> {
+    const formData = new FormData();
+    formData.append("video", videoFile);
+    formData.append("analysisType", analysisType);
+
+    const authHeaders = await this.getAuthHeaders();
+    const response = await fetch(`${this.baseUrl}/analyze-video`, {
+      method: "POST",
+      headers: {
+        ...authHeaders,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to analyze video: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.error || "Analysis failed");
+    }
+
+    return data.structured;
+  }
+
   async sendChatMessage(
     message: string,
     conversationHistory: any[] = [],

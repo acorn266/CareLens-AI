@@ -122,37 +122,20 @@ export default function SkinAnalysisPage() {
     speak("Analyzing your video. This may take a moment.");
 
     try {
-      const formData = new FormData();
-      formData.append("video", selectedVideo);
-      formData.append("analysisType", "skin");
-
-      const response = await fetch("/api/analyze-video", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem(
-            "supabase.auth.token"
-          )}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Video analysis failed");
-      }
-
-      const result = await response.json();
-      setAnalysis(result.structured);
+      // apiClient sends the signed-in user's Supabase access token
+      const structured = await apiClient.analyzeVideo(selectedVideo, "skin");
+      setAnalysis(structured);
 
       // Speak the analysis summary
       const urgencyMessage =
-        result.structured.urgency === "Seek Care"
+        structured.urgency === "Seek Care"
           ? "This requires medical attention."
-          : result.structured.urgency === "Monitor"
+          : structured.urgency === "Monitor"
           ? "Please monitor this area."
           : "This appears routine.";
 
       speak(
-        `Video analysis complete. Confidence level: ${result.structured.confidence}. ${urgencyMessage}`
+        `Video analysis complete. Confidence level: ${structured.confidence}. ${urgencyMessage}`
       );
     } catch (error) {
       console.error("Video analysis failed:", error);
