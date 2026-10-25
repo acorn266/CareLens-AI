@@ -88,8 +88,12 @@ export async function POST(request: NextRequest) {
     };
     const updatedHistory = [...conversationHistory, newMessage, aiMessage];
 
-    // Save or update conversation in database
+    // Save or update conversation in database (signed-in users only)
     try {
+      if (!authToken) {
+        throw new Error("Not signed in");
+      }
+
       let savedConversation;
 
       if (conversationId) {
@@ -124,8 +128,11 @@ export async function POST(request: NextRequest) {
         },
       });
     } catch (saveError) {
-      // If saving fails, still return response but indicate it wasn't saved
-      console.error("Failed to save conversation:", saveError);
+      // If saving fails, still return response but indicate it wasn't saved.
+      // Signed-out users are expected here, so only log real failures.
+      if (authToken) {
+        console.error("Failed to save conversation:", saveError);
+      }
 
       return NextResponse.json({
         success: true,
