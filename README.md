@@ -10,7 +10,7 @@ A multimodal health assistant built with Next.js and Google Gemini that helps pe
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
-![Google Gemini](https://img.shields.io/badge/Google_Gemini-2.5_Flash-4285F4?logo=google&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Google_Gemini-3.6_Flash-4285F4?logo=google&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-Auth_%26_Postgres-3FCF8E?logo=supabase&logoColor=white)
 
 </div>
@@ -47,7 +47,7 @@ Signed-in users can save analyses and conversations to a personal health record 
 | | |
 | --- | --- |
 | **Type** | Full-stack web app (Next.js App Router + API routes) |
-| **AI provider** | Google Gemini 2.5 Flash, with optional Imagen image generation |
+| **AI provider** | Google Gemini 3.6 Flash (configurable), with optional Imagen image generation |
 | **Data layer** | Supabase Auth + PostgreSQL |
 | **Target users** | Older adults, people with visual or motor impairments, and caregivers |
 
@@ -83,7 +83,7 @@ CareLens AI gives users several input modes (camera, image upload, video upload,
 | Scheduled medication reminders | Experimental | Sends a test browser notification only |
 
 ### AI-powered skin analysis
-Capture a photo with the device camera or upload an image. Gemini 2.5 Flash returns a visual assessment, possible concerns, a confidence level, an urgency level, and recommendations. The prompt explicitly instructs the model to stay non-diagnostic.
+Capture a photo with the device camera or upload an image. Gemini returns a visual assessment, possible concerns, a confidence level, an urgency level, and recommendations. The prompt explicitly instructs the model to stay non-diagnostic.
 
 ### Multimodal image and video processing
 The skin analysis page also accepts short video uploads (MP4, MOV, AVI; up to 25 MB). The video is sent to Gemini with a prompt that looks at movement, posture, gait, and visible skin changes.
@@ -112,7 +112,7 @@ The app ships a web app manifest with shortcuts (Emergency Chat, Skin Analysis, 
 | --- | --- |
 | Framework | Next.js 15 (App Router, Route Handlers), React 19, TypeScript |
 | Styling and UI | Tailwind CSS 4, Radix UI primitives, shadcn/ui-style components, Lucide icons |
-| AI | `@google/generative-ai` SDK with Gemini 2.5 Flash; Imagen via the Generative Language REST API |
+| AI | `@google/generative-ai` SDK with Gemini 3.6 Flash (falls back to 3.5 Flash-Lite on temporary 429/503 errors); Imagen via the Generative Language REST API |
 | Browser APIs | MediaDevices (camera), MediaRecorder, Web Speech API (recognition + synthesis), Notifications |
 | Auth and data | Supabase Auth, Supabase PostgreSQL with Row Level Security ([`supabase-schema.sql`](supabase-schema.sql)) |
 | Forms and validation | React Hook Form, Zod |
@@ -139,7 +139,7 @@ flowchart LR
     end
 
     subgraph External["External services"]
-        Gemini["Google Gemini 2.5 Flash"]
+        Gemini["Google Gemini 3.6 Flash"]
         Imagen["Google Imagen"]
         Supa["Supabase Auth + PostgreSQL"]
     end
@@ -210,6 +210,7 @@ Then fill in the values described in [Environment Variables](#8-environment-vari
 | Variable | Required | Scope | Description |
 | --- | --- | --- | --- |
 | `GOOGLE_AI_API_KEY` | Yes | Server | Google AI Studio key used for Gemini and Imagen |
+| `GEMINI_MODEL` | Optional | Server | Overrides the Gemini model (default `gemini-3.6-flash`). On a temporary 429/503 the app retries once with `gemini-3.5-flash-lite` |
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes | Client + server | Your Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Client + server | Supabase anonymous (public) key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Optional | Server only | Used only by the server-side admin client. Never expose it to the browser |

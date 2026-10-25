@@ -1,12 +1,52 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import {
+  GoogleGenerativeAI,
+  GoogleGenerativeAIFetchError,
+  type GenerativeModel,
+} from "@google/generative-ai";
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY || "");
 
-// Get Gemini Pro model for multimodal analysis
-export const getGeminiProModel = () => {
-  return genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-};
+// Primary model, overridable with the optional GEMINI_MODEL env var
+export const GEMINI_MODEL = process.env.GEMINI_MODEL?.trim() || "gemini-3.6-flash";
+
+// Used only when the primary model is temporarily busy or rate limited
+export const GEMINI_FALLBACK_MODEL = "gemini-3.5-flash-lite";
+
+const TRANSIENT_STATUSES = [429, 503];
+
+// Runs `call` with the primary model and retries once with the fallback model
+// on a temporary 429/503. Any other error is thrown unchanged. Callers must do
+// their own validation, auth and safety checks before calling this.
+export async function withModelFallback<T>(
+  call: (modelName: string) => Promise<T>
+): Promise<T> {
+  try {
+    return await call(GEMINI_MODEL);
+  } catch (error) {
+    const status =
+      error instanceof GoogleGenerativeAIFetchError ? error.status : undefined;
+    if (
+      status === undefined ||
+      !TRANSIENT_STATUSES.includes(status) ||
+      GEMINI_MODEL === GEMINI_FALLBACK_MODEL
+    ) {
+      throw error;
+    }
+    console.warn(
+      `Gemini model ${GEMINI_MODEL} returned ${status}; retrying with ${GEMINI_FALLBACK_MODEL}`
+    );
+    return call(GEMINI_FALLBACK_MODEL);
+  }
+}
+
+// Get the Gemini model for multimodal analysis (with transient-error fallback)
+export const getGeminiProModel = (): Pick<GenerativeModel, "generateContent"> => ({
+  generateContent: (request) =>
+    withModelFallback((model) =>
+      genAI.getGenerativeModel({ model }).generateContent(request)
+    ),
+});
 
 // Health analysis prompt templates
 export const HEALTH_PROMPTS = {

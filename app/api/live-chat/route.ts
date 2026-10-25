@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { emergencyIntelligence } from "@/lib/emergency-intelligence";
+import { withModelFallback } from "@/lib/gemini";
 import { isPreviewMode } from "@/lib/preview-mode";
 import { MOCK_AI_TEXT } from "@/lib/preview/mock-ai";
 
@@ -61,8 +62,9 @@ export async function POST(request: NextRequest) {
         }
 
         // Initialize the model with Live API capabilities
-        const model = genAI.getGenerativeModel({
-          model: "gemini-2.5-flash",
+        const createModel = (modelName: string) =>
+          genAI.getGenerativeModel({
+          model: modelName,
           generationConfig: {
             temperature: 0.7,
             topK: 40,
@@ -116,12 +118,14 @@ Remember: You are a supportive health companion, not a doctor. Always recommend 
           },
         ];
 
-        // Start streaming response
-        const chat = model.startChat({
-          history: conversationContext.slice(0, -1), // All except the current message
-        });
-
-        const result = await chat.sendMessageStream(message);
+        // Start streaming response (falls back on a temporary 429/503 before streaming begins)
+        const result = await withModelFallback((modelName) =>
+          createModel(modelName)
+            .startChat({
+              history: conversationContext.slice(0, -1), // All except the current message
+            })
+            .sendMessageStream(message)
+        );
 
         let fullResponse = "";
         let confidenceLevel = "Medium";

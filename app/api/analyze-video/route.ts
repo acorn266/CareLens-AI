@@ -86,10 +86,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Initialize Gemini model (using 2.5 Flash for competition compliance)
+    // Initialize Gemini model (see GEMINI_MODEL in lib/gemini.ts)
     const model = getGeminiProModel();
 
-    // Generate content with video using Gemini 2.5 Flash (competition compliant)
+    // Generate content with video
     const result = await model.generateContent([
       prompt,
       {
