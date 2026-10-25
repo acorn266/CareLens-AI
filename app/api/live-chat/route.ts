@@ -128,31 +128,13 @@ Remember: You are a supportive health companion, not a doctor. Always recommend 
         );
 
         let fullResponse = "";
-        let confidenceLevel = "Medium";
-        let urgencyLevel = "Normal";
-        let isEmergency = false;
-        let streamingEmergencyAlert = null;
 
-        // Process streaming chunks
+        // Process streaming chunks. The AI's text is not scanned for emergency
+        // keywords: it routinely lists warning signs as safety advice. Alerts
+        // come only from the user's message (checked above, before streaming).
         for await (const chunk of result.stream) {
           const chunkText = chunk.text();
           fullResponse += chunkText;
-
-          // **REAL-TIME EMERGENCY DETECTION ON STREAMING TEXT**
-          const streamEmergency =
-            emergencyIntelligence.detectEmergency(fullResponse);
-          if (streamEmergency && !streamingEmergencyAlert) {
-            streamingEmergencyAlert = streamEmergency;
-            controller.enqueue(
-              encoder.encode(
-                `data: ${JSON.stringify({
-                  type: "emergency_alert",
-                  alert: streamEmergency,
-                  sessionId,
-                })}\n\n`
-              )
-            );
-          }
 
           // Send partial response
           controller.enqueue(
@@ -161,45 +143,20 @@ Remember: You are a supportive health companion, not a doctor. Always recommend 
                 type: "chunk",
                 content: chunkText,
                 sessionId,
-                emergencyDetected: !!(
-                  emergencyAlert || streamingEmergencyAlert
-                ),
+                emergencyDetected: !!emergencyAlert,
               })}\n\n`
             )
           );
-
-          // Check for emergency keywords in real-time
-          const emergencyKeywords = [
-            "chest pain",
-            "heart attack",
-            "can't breathe",
-            "difficulty breathing",
-            "unconscious",
-            "severe bleeding",
-            "allergic reaction",
-            "stroke",
-            "suicide",
-            "self-harm",
-            "overdose",
-            "severe pain",
-          ];
-
-          if (
-            emergencyKeywords.some((keyword) =>
-              fullResponse.toLowerCase().includes(keyword.toLowerCase())
-            )
-          ) {
-            isEmergency = true;
-            urgencyLevel = "High";
-            confidenceLevel = "High";
-          }
         }
 
         // Analyze the complete response for health insights
-        const analysisResult = analyzeHealthResponse(fullResponse, message);
+        const analysisResult = analyzeHealthResponse(
+          fullResponse,
+          message,
+          !!emergencyAlert
+        );
 
-        // Final emergency alert (combine all detections)
-        const finalEmergencyAlert = emergencyAlert || streamingEmergencyAlert;
+        const finalEmergencyAlert = emergencyAlert;
 
         // Send final analysis
         controller.enqueue(
@@ -250,19 +207,13 @@ Remember: You are a supportive health companion, not a doctor. Always recommend 
 }
 
 // Health analysis helper function
-function analyzeHealthResponse(response: string, userMessage: string) {
-  const emergencyKeywords = [
-    "chest pain",
-    "heart attack",
-    "stroke",
-    "unconscious",
-    "severe bleeding",
-    "can't breathe",
-    "difficulty breathing",
-    "allergic reaction",
-    "overdose",
-  ];
-
+function analyzeHealthResponse(
+  response: string,
+  userMessage: string,
+  isEmergency: boolean
+) {
+  // Emergency status comes from the user's own message (see detectEmergency);
+  // the AI response is never used to raise it.
   const urgentKeywords = [
     "severe pain",
     "high fever",
@@ -276,21 +227,11 @@ function analyzeHealthResponse(response: string, userMessage: string) {
   const responseText = response.toLowerCase();
   const messageText = userMessage.toLowerCase();
 
-  // Determine emergency status
-  const isEmergency = emergencyKeywords.some(
-    (keyword) => responseText.includes(keyword) || messageText.includes(keyword)
-  );
-
   // Determine urgency level
   let urgency = "Normal";
   if (isEmergency) {
     urgency = "High";
-  } else if (
-    urgentKeywords.some(
-      (keyword) =>
-        responseText.includes(keyword) || messageText.includes(keyword)
-    )
-  ) {
+  } else if (urgentKeywords.some((keyword) => messageText.includes(keyword))) {
     urgency = "Medium";
   }
 

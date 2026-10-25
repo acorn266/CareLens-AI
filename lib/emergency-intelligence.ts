@@ -24,62 +24,142 @@ export interface HealthPattern {
   dataPoints: any[];
 }
 
+// A warning sign to look for. `label` names the alert; `pattern` matches the
+// many ways people describe it. Patterns are matched against lowercased text.
+interface WarningSign {
+  label: string;
+  pattern: RegExp;
+}
+
+const sign = (label: string, ...alternatives: string[]): WarningSign => ({
+  label,
+  pattern: new RegExp(`\\b(?:${(alternatives.length ? alternatives : [label]).join("|")})\\b`),
+});
+
+// Words that negate a symptom when they appear shortly before it in the same
+// clause ("I do not have chest pain", "no chest pain", "without any bleeding").
+const NEGATION_CUE =
+  /\b(?:no|not|don't|do not|doesn't|does not|didn't|did not|never|without|denies|deny|isn't|is not|aren't|wasn't|haven't|hasn't|free of|none)\b(?:\s+\S+){0,4}\s*$/;
+// Hedges that contain "not" but are not denials ("not sure", "not certain")
+const HEDGE = /\bnot (?:sure|certain|positive)\b/g;
+
+// Phrases that mark a request for general information rather than a report
+const INFORMATIONAL_CUE =
+  /\b(?:what (?:is|are|causes)|how (?:do|does|can|is|are)|why (?:do|does|is|are)|(?:can|does|is) (?:a|an)|signs of|symptoms of|warning signs|risk of|risks of|causes of|prevent|tell me about|information about|learn about|difference between)\b/;
+// First-person reports of experiencing something, which override the above
+const PERSONAL_REPORT =
+  /\b(?:i|i'm|i am|i've|i have|me|my|we|we're)\b[^.?!]*\b(?:have|having|had|has|feel|feeling|felt|got|experiencing|suffering|is|are|was|can't|cannot|can not|think|suddenly)\b/;
+
 class EmergencyIntelligenceSystem {
-  private criticalKeywords = [
+  private criticalSigns: WarningSign[] = [
     // Cardiac emergencies
-    "chest pain",
-    "heart attack",
-    "cardiac arrest",
-    "heart stopping",
+    sign("chest pain", "chest pains?", "pain in (?:my |the )?chest", "chest (?:is )?(?:tight|tightness|pressure)"),
+    sign("heart attack", "heart attack", "having a heart attack"),
+    sign("cardiac arrest"),
+    sign("heart stopping"),
     // Respiratory emergencies
-    "can't breathe",
-    "difficulty breathing",
-    "choking",
-    "suffocating",
-    // Neurological emergencies
-    "stroke",
-    "seizure",
-    "unconscious",
-    "paralysis",
-    "sudden weakness",
+    sign(
+      "difficulty breathing",
+      "difficulty breathing",
+      "trouble breathing",
+      "struggling to breathe",
+      "(?:can't|cannot|can not|cant|unable to|not able to) breathe",
+      "can't catch my breath"
+    ),
+    sign("choking"),
+    sign("suffocating"),
+    // Neurological emergencies (including FAST stroke signs)
+    sign("stroke", "(?:a |having a )?stroke"),
+    sign(
+      "stroke symptoms",
+      "face (?:is )?drooping",
+      "drooping face",
+      "facial droop",
+      "(?:one|1) side of (?:my |the |his |her |their )?face",
+      "slurred speech",
+      "slurring (?:my )?words",
+      "(?:can't|cannot|can not|unable to|not able to) speak",
+      "trouble speaking",
+      "difficulty speaking",
+      "(?:numb|weak|weakness)(?:ness)? (?:on|in) (?:one|1) side"
+    ),
+    sign("seizure", "seizures?", "convulsions?"),
+    sign("unconscious", "unconscious", "passed out and (?:won't|will not) wake"),
+    sign("paralysis", "paralysis", "paralyzed", "can't move (?:my )?(?:arm|leg|side)"),
+    sign("sudden weakness"),
     // Severe injuries
-    "severe bleeding",
-    "broken bone",
-    "head injury",
-    "severe burn",
+    sign("severe bleeding", "severe bleeding", "bleeding (?:heavily|badly|a lot|won't stop|will not stop)"),
+    sign("broken bone", "broken bones?", "bone is broken"),
+    sign("head injury", "head injury", "hit my head", "hit (?:his|her|their) head"),
+    sign("severe burn", "severe burns?"),
     // Allergic reactions
-    "allergic reaction",
-    "anaphylaxis",
-    "swelling face",
-    "throat closing",
+    sign("allergic reaction"),
+    sign("anaphylaxis", "anaphylaxis", "anaphylactic"),
+    sign("swelling face", "swelling face", "face (?:is )?swelling", "swollen (?:face|tongue|throat|lips)"),
+    sign("throat closing", "throat (?:is )?closing"),
     // Mental health crises
-    "suicide",
-    "self-harm",
-    "want to die",
-    "ending it all",
+    sign("suicide", "suicide", "suicidal", "kill myself"),
+    sign("self-harm", "self-harm", "self harm", "hurt myself", "hurting myself"),
+    sign("want to die"),
+    sign("ending it all"),
     // Overdose/poisoning
-    "overdose",
-    "poisoned",
-    "too many pills",
-    "chemical exposure",
+    sign("overdose", "overdosed?", "overdosing"),
+    sign("poisoned"),
+    sign("too many pills"),
+    sign("chemical exposure"),
   ];
 
-  private highPriorityKeywords = [
-    "severe pain",
-    "intense headache",
-    "vision loss",
-    "hearing loss",
-    "fainting",
-    "dizzy spells",
-    "confusion",
-    "memory loss",
-    "high fever",
-    "persistent vomiting",
-    "severe diarrhea",
-    "medication reaction",
-    "side effects",
-    "rash spreading",
+  private highPrioritySigns: WarningSign[] = [
+    sign("severe pain"),
+    sign("intense headache", "intense headache", "severe headache", "worst headache"),
+    sign("vision loss", "vision loss", "lost (?:my )?vision", "can't see"),
+    sign("hearing loss"),
+    sign("fainting", "fainting", "fainted", "passed out"),
+    sign("dizzy spells"),
+    sign("confusion", "confusion", "confused"),
+    sign("memory loss"),
+    sign("high fever"),
+    sign("persistent vomiting", "persistent vomiting", "can't stop vomiting"),
+    sign("severe diarrhea"),
+    sign("medication reaction"),
+    sign("side effects"),
+    sign("rash spreading"),
   ];
+
+  // Crisis resources should still be offered when someone asks about these,
+  // so they are not suppressed by the informational-question rule.
+  private alwaysShowCategories: EmergencyAlert["type"][] = ["MENTAL_HEALTH"];
+
+  // Returns the first warning sign in `signs` that the user is actually
+  // reporting, skipping negated mentions and general-information questions.
+  private findReportedSign(text: string, signs: WarningSign[]): WarningSign | null {
+    const normalized = text.toLowerCase().replace(/[‘’]/g, "'");
+    // Judge each sentence on its own, then each clause within it
+    const sentences = normalized.split(/(?<=[.?!])\s+|\n+/).filter(Boolean);
+
+    for (const s of signs) {
+      for (const sentence of sentences) {
+        const informational =
+          INFORMATIONAL_CUE.test(sentence) && !PERSONAL_REPORT.test(sentence);
+        if (
+          informational &&
+          !this.alwaysShowCategories.includes(this.categorizeEmergency(s.label))
+        ) {
+          continue;
+        }
+
+        const clauses = sentence.split(/,|;|\bbut\b|\bhowever\b|\bthough\b/);
+        for (const clause of clauses) {
+          const match = s.pattern.exec(clause);
+          if (!match) continue;
+          const before = clause.slice(0, match.index).replace(HEDGE, "");
+          if (NEGATION_CUE.test(before)) continue;
+          return s;
+        }
+      }
+    }
+    return null;
+  }
 
   private vitalSignRanges = {
     heartRate: { min: 60, max: 100, critical: { min: 40, max: 140 } },
@@ -91,40 +171,40 @@ class EmergencyIntelligenceSystem {
     oxygenSaturation: { min: 95, max: 100, critical: { min: 85, max: 100 } },
   };
 
-  // Real-time emergency detection from user input
+  // Real-time emergency detection from the USER's own input (a typed message or
+  // their spoken transcript). Do not pass AI-generated text: model replies often
+  // list warning signs as safety advice, which would raise false alarms.
   detectEmergency(input: string, context?: any): EmergencyAlert | null {
-    const lowerInput = input.toLowerCase();
-
     // Check for critical emergencies
-    for (const keyword of this.criticalKeywords) {
-      if (lowerInput.includes(keyword)) {
-        return this.createEmergencyAlert({
-          severity: "CRITICAL",
-          type: this.categorizeEmergency(keyword),
-          message: `CRITICAL: Potential ${keyword} detected. Immediate medical attention required.`,
-          symptoms: [keyword],
-          recommendations: this.getCriticalRecommendations(keyword),
-          escalationLevel: 1,
-          confidence: 0.9,
-          locationRequired: true,
-        });
-      }
+    const critical = this.findReportedSign(input, this.criticalSigns);
+    if (critical) {
+      const keyword = critical.label;
+      return this.createEmergencyAlert({
+        severity: "CRITICAL",
+        type: this.categorizeEmergency(keyword),
+        message: `CRITICAL: Potential ${keyword} detected. Immediate medical attention required.`,
+        symptoms: [keyword],
+        recommendations: this.getCriticalRecommendations(keyword),
+        escalationLevel: 1,
+        confidence: 0.9,
+        locationRequired: true,
+      });
     }
 
     // Check for high priority concerns
-    for (const keyword of this.highPriorityKeywords) {
-      if (lowerInput.includes(keyword)) {
-        return this.createEmergencyAlert({
-          severity: "HIGH",
-          type: "MEDICAL",
-          message: `High priority health concern detected: ${keyword}`,
-          symptoms: [keyword],
-          recommendations: this.getHighPriorityRecommendations(keyword),
-          escalationLevel: 2,
-          confidence: 0.7,
-          locationRequired: false,
-        });
-      }
+    const high = this.findReportedSign(input, this.highPrioritySigns);
+    if (high) {
+      const keyword = high.label;
+      return this.createEmergencyAlert({
+        severity: "HIGH",
+        type: "MEDICAL",
+        message: `High priority health concern detected: ${keyword}`,
+        symptoms: [keyword],
+        recommendations: this.getHighPriorityRecommendations(keyword),
+        escalationLevel: 2,
+        confidence: 0.7,
+        locationRequired: false,
+      });
     }
 
     return null;
@@ -244,7 +324,8 @@ class EmergencyIntelligenceSystem {
     if (
       keyword.includes("suicide") ||
       keyword.includes("self-harm") ||
-      keyword.includes("want to die")
+      keyword.includes("want to die") ||
+      keyword.includes("ending it all")
     )
       return "MENTAL_HEALTH";
     if (
@@ -281,7 +362,7 @@ class EmergencyIntelligenceSystem {
       ];
     }
 
-    if (keyword.includes("suicide") || keyword.includes("self-harm")) {
+    if (this.categorizeEmergency(keyword) === "MENTAL_HEALTH") {
       return [
         "Call National Suicide Prevention Lifeline: 988",
         "Stay with someone you trust",

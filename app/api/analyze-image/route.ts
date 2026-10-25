@@ -5,10 +5,6 @@ import {
   parseHealthAnalysis,
 } from "@/lib/gemini";
 import { saveHealthRecord } from "@/lib/health-records";
-import {
-  emergencyIntelligence,
-  EmergencyAlert,
-} from "@/lib/emergency-intelligence";
 import { isPreviewMode } from "@/lib/preview-mode";
 import { MOCK_AI_TEXT } from "@/lib/preview/mock-ai";
 
@@ -64,25 +60,9 @@ export async function POST(request: NextRequest) {
     // Parse the response into structured format
     const structuredAnalysis = parseHealthAnalysis(analysisText);
 
-    // **EMERGENCY DETECTION** - Check analysis results for emergencies
-    let emergencyAlert: EmergencyAlert | null = null;
-    if (analysisText) {
-      emergencyAlert = emergencyIntelligence.detectEmergency(analysisText);
-    }
-
-    // Add emergency information to analysis if detected
-    if (emergencyAlert) {
-      structuredAnalysis.emergency = {
-        detected: true,
-        severity: emergencyAlert.severity,
-        type: emergencyAlert.type,
-        message: emergencyAlert.message,
-        recommendations: emergencyAlert.recommendations,
-        escalationLevel: emergencyAlert.escalationLevel,
-        confidence: emergencyAlert.confidence,
-        locationRequired: emergencyAlert.locationRequired,
-      };
-    }
+    // No keyword-based emergency alert here: the only text is the AI's own
+    // analysis, which lists warning signs as advice. The model's structured
+    // urgency level (Routine / Monitor / Seek Care) is reported instead.
 
     // Save to database if user is authenticated
     try {

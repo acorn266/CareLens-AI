@@ -71,11 +71,9 @@ export async function POST(request: NextRequest) {
     const response = await result.response;
     const aiResponse = response.text();
 
-    // Additional emergency check on AI response
-    const responseEmergency: EmergencyAlert | null =
-      emergencyIntelligence.detectEmergency(aiResponse);
-    const finalEmergencyAlert: EmergencyAlert | null =
-      emergencyAlert || responseEmergency;
+    // Alerts come only from what the user said. The AI's reply is not scanned:
+    // it routinely lists warning signs as safety advice ("seek care if...").
+    const finalEmergencyAlert: EmergencyAlert | null = emergencyAlert;
 
     // Prepare updated conversation history
     const newMessage = {
