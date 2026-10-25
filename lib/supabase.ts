@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
+import { isPreviewMode } from "@/lib/preview-mode";
+import { createMockSupabaseClient } from "@/lib/preview/mock-supabase";
 
 // Singleton client instance to avoid multiple clients
 let supabaseClient: any = null;
@@ -8,6 +10,12 @@ let supabaseClient: any = null;
 export const createSupabaseClient = () => {
   // Return existing client if already created
   if (supabaseClient) {
+    return supabaseClient;
+  }
+
+  // Local development preview: in-memory mock, no network or credentials
+  if (isPreviewMode) {
+    supabaseClient = createMockSupabaseClient();
     return supabaseClient;
   }
 

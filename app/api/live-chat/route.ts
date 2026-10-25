@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { emergencyIntelligence } from "@/lib/emergency-intelligence";
+import { isPreviewMode } from "@/lib/preview-mode";
+import { MOCK_AI_TEXT } from "@/lib/preview/mock-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
 
@@ -21,6 +23,22 @@ export async function POST(request: NextRequest) {
             encoder.encode(
               `data: ${JSON.stringify({
                 error: "No message provided",
+              })}\n\n`
+            )
+          );
+          controller.close();
+          return;
+        }
+
+        // Local development preview: canned reply, no Gemini call
+        if (isPreviewMode) {
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({
+                type: "complete",
+                response: MOCK_AI_TEXT.chat,
+                sessionId,
+                preview: true,
               })}\n\n`
             )
           );

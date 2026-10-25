@@ -9,6 +9,8 @@ import {
   emergencyIntelligence,
   EmergencyAlert,
 } from "@/lib/emergency-intelligence";
+import { isPreviewMode } from "@/lib/preview-mode";
+import { MOCK_AI_TEXT } from "@/lib/preview/mock-ai";
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,6 +21,20 @@ export async function POST(request: NextRequest) {
         { error: "No image data provided" },
         { status: 400 }
       );
+    }
+
+    // Local development preview: canned response, no Gemini call or DB write
+    if (isPreviewMode) {
+      const text =
+        analysisType === "medication" ? MOCK_AI_TEXT.medication : MOCK_AI_TEXT.skin;
+      return NextResponse.json({
+        success: true,
+        analysis: parseHealthAnalysis(text),
+        rawResponse: text,
+        recordId: null,
+        saved: false,
+        preview: true,
+      });
     }
 
     // Remove data URL prefix if present

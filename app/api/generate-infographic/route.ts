@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isPreviewMode } from "@/lib/preview-mode";
 
 export async function POST(request: NextRequest) {
   try {
@@ -74,7 +75,8 @@ export async function POST(request: NextRequest) {
       "imagen-3.0-generate-001",
     ];
 
-    for (const modelName of imagenModels) {
+    // Local development preview skips Imagen and uses the SVG fallback below
+    for (const modelName of isPreviewMode ? [] : imagenModels) {
       try {
         console.log(`Trying Imagen model: ${modelName}`);
 

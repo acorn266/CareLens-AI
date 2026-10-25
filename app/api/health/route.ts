@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { isPreviewMode } from "@/lib/preview-mode"
 
 export async function GET() {
   try {
@@ -7,6 +8,7 @@ export async function GET() {
       status: "healthy",
       timestamp: new Date().toISOString(),
       version: "1.0.0",
+      previewMode: isPreviewMode,
       services: {
         gemini: process.env.GOOGLE_AI_API_KEY ? "configured" : "missing",
         database: "ready", // Would check actual database connection

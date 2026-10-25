@@ -5,6 +5,8 @@ import {
   emergencyIntelligence,
   EmergencyAlert,
 } from "@/lib/emergency-intelligence";
+import { isPreviewMode } from "@/lib/preview-mode";
+import { MOCK_AI_TEXT } from "@/lib/preview/mock-ai";
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,6 +30,27 @@ export async function POST(request: NextRequest) {
     // **EMERGENCY DETECTION** - Check for emergencies first
     const emergencyAlert: EmergencyAlert | null =
       emergencyIntelligence.detectEmergency(message);
+
+    // Local development preview: canned reply, no Gemini call or DB write.
+    // Emergency detection still runs locally so its alert UI can be inspected.
+    if (isPreviewMode) {
+      return NextResponse.json({
+        success: true,
+        response: MOCK_AI_TEXT.chat,
+        conversationHistory: [
+          ...conversationHistory,
+          { role: "user", content: message },
+          { role: "assistant", content: MOCK_AI_TEXT.chat },
+        ],
+        conversationId: conversationId || null,
+        saved: false,
+        preview: true,
+        analysis: {
+          emergency: !!emergencyAlert,
+          emergencyAlert: emergencyAlert || null,
+        },
+      });
+    }
 
     const model = getGeminiProModel();
 

@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { AccessibilityProvider } from "@/components/accessibility-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { AccessibilityToolbar } from "@/components/accessibility-toolbar";
+import { PreviewBanner } from "@/components/preview-banner";
 import "./globals.css";
 
 const inter = Inter({
@@ -66,6 +67,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
       <body className={`${inter.variable} ${workSans.variable} antialiased`}>
+        <PreviewBanner />
         <AuthProvider>
           <AccessibilityProvider>
             <Suspense fallback={<div>Loading...</div>}>

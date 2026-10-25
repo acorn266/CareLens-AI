@@ -5,6 +5,8 @@ import {
   parseHealthAnalysis,
 } from "@/lib/gemini";
 import { saveHealthRecord } from "@/lib/health-records";
+import { isPreviewMode } from "@/lib/preview-mode";
+import { MOCK_AI_TEXT } from "@/lib/preview/mock-ai";
 
 export async function POST(request: NextRequest) {
   try {
@@ -64,6 +66,24 @@ export async function POST(request: NextRequest) {
       prompt = `Focus on skin condition analysis: visible skin issues, rashes, moles, or dermatological concerns. ${HEALTH_PROMPTS.videoAnalysis}`;
     } else if (analysisType === "behavioral") {
       prompt = `Focus on behavioral indicators: signs of pain, confusion, distress, or cognitive changes. ${HEALTH_PROMPTS.videoAnalysis}`;
+    }
+
+    // Local development preview: canned response, no Gemini call or DB write
+    if (isPreviewMode) {
+      return NextResponse.json({
+        success: true,
+        analysis: MOCK_AI_TEXT.video,
+        structured: parseHealthAnalysis(MOCK_AI_TEXT.video),
+        recordId: null,
+        saved: false,
+        preview: true,
+        metadata: {
+          fileName: videoFile.name,
+          fileSize: videoFile.size,
+          fileType: videoFile.type,
+          analysisType,
+        },
+      });
     }
 
     // Initialize Gemini model (using 2.5 Flash for competition compliance)
